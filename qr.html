@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Payment QR Tool</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family:
+        "Segoe UI",
+        "Segoe UI Emoji",
+        "Noto Color Emoji",
+        "Apple Color Emoji",
+        sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      transition: 0.4s;
+    }
+
+    body.success-mode {
+      background: #16a34a;
+    }
+
+    .bg-left, .bg-right {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 20%;
+      color: #fff;
+      font-size: 12px;
+      padding: 12px;
+      font-weight: 700;
+      overflow-y: auto;
+    }
+
+    .bg-left { left: 0; }
+    .bg-right { right: 0; text-align: right; }
+
+    .service {
+      margin-bottom: 8px;
+      padding: 5px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 5px;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 340px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      z-index: 2;
+    }
+
+    body.success-mode .container {
+      display: none;
+    }
+
+    .shop-header {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 10px 0;
+      font-size: 22px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      font-size: 17px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .generate-btn {
+      background: #667eea;
+      color: #fff;
+    }
+
+    .success-btn {
+      background: green;
+      color: #fff;
+      display: none;
+    }
+
+    /* ✅ FIXED QR CENTER */
+    #qrcode {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #qrcode canvas,
+    #qrcode img {
+      margin: auto;
+      display: block;
+    }
+
+    .amount {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #777;
+    }
+
+    #qrLabel {
+      display: none;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    #successScreen {
+      display: none;
+      position: absolute;
+      text-align: center;
+      color: white;
+    }
+
+    body.success-mode #successScreen {
+      display: block;
+    }
+
+    .success-icon {
+      font-size: 70px;
+    }
+
+    .success-text {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .reset-btn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: #fff;
+      color: green;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .bg-left, .bg-right {
+        width: 18%;
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="bg-left">
+  <div class="service">🪪 Aadhaar Enrollment</div>
+  <div class="service">🆔 PAN Card </div>
+  <div class="service">📄 Ration Card </div>
+  <div class="service">📜 Land Recipt </div>
+  <div class="service">🖨️ Photo Print </div>
+  <div class="service">🛤️ Train Ticket </div>
+  <div class="service">✈️ flight Ticket</div>
+</div>
+
+<div class="bg-right">
+  <div class="service">📝 Form Fill Up </div>
+  <div class="service">🖨️ Document Print</div>
+  <div class="service">🏦 Banking</div>
+  <div class="service">💡 Bill Payment </div>
+  <div class="service">📱 Recharge</div>
+  <div class="service"> 🛂 Passport </div>
+  <div class="service"> 🎓 Scholarship </div>
+</div>
+
+<div class="container">
+
+  <div class="shop-header">INAM DIGITAL & eSERVICES</div>
+  <div class="tagline">🔒 Secure Digital Services</div>
+
+  <h2 id="titleText">💰 Scan & Pay</h2>
+
+  <input type="number" id="amount" placeholder="Enter Amount">
+
+  <button class="generate-btn" id="generateBtn" onclick="generateQR()">Generate QR</button>
+
+  <div id="qrLabel">📲 Scan & Pay</div>
+
+  <div id="qrcode"></div>
+
+  <div class="amount" id="amountText"></div>
+
+  <button class="success-btn" id="successBtn" onclick="showSuccess()">
+    ✅ Payment Received
+  </button>
+
+  <div class="footer">🔐 Secure Payment • 📲 Scan & Pay</div>
+
+</div>
+
+<div id="successScreen">
+  <div class="success-icon">✔</div>
+  <div class="success-text">Payment Successful</div>
+  <button class="reset-btn" onclick="resetApp()">New Payment</button>
+</div>
+
+<script>
+function generateQR() {
+  let amount = document.getElementById("amount").value;
+
+  if (!amount) {
+    alert("Enter amount");
+    return;
+  }
+
+  let upiURL = `upi://pay?pa=inamesrvices@axl&pn=INAM DIGITAL&am=${amount}&cu=INR`;
+
+  document.getElementById("qrcode").innerHTML = "";
+
+  new QRCode(document.getElementById("qrcode"), {
+    text: upiURL,
+    width: 230,
+    height: 230
+  });
+
+  document.getElementById("amountText").innerText = "₹ " + amount;
+  document.getElementById("successBtn").style.display = "block";
+
+  document.getElementById("amount").style.display = "none";
+  document.getElementById("generateBtn").style.display = "none";
+  document.getElementById("titleText").style.display = "none";
+  document.getElementById("qrLabel").style.display = "block";
+}
+
+function showSuccess() {
+  document.body.classList.add("success-mode");
+}
+
+function resetApp() {
+  document.body.classList.remove("success-mode");
+
+  document.getElementById("qrcode").innerHTML = "";
+  document.getElementById("amount").value = "";
+
+  document.getElementById("successBtn").style.display = "none";
+
+  document.getElementById("amount").style.display = "block";
+  document.getElementById("generateBtn").style.display = "block";
+  document.getElementById("titleText").style.display = "block";
+  document.getElementById("qrLabel").style.display = "none";
+}
+</script>
+
+</body>
+</html>
